@@ -1,6 +1,7 @@
 from requests import get
 from bs4 import BeautifulSoup as bs
 
+
 def vysledky_hlasovani():
     base_url = "https://www.volby.cz/pls/ps2017nss/"
     url = "https://www.volby.cz/pls/ps2017nss/ps3?xjazyk=CZ"
@@ -22,14 +23,39 @@ def vysledky_hlasovani():
                 okresy.append(base_url + item)
         return okresy
 
-    def najdi_uzemni_celky():
+    def najdi_uzemni_celky(url):
         rozdelene_html = rozdel_html(url)
         vsechny_celky = rozdelene_html.find_all("a")
         celky = najdi_celky(vsechny_celky)
         okresy = najdi_relevantni_okresy(celky)
         return okresy
     
-    print(najdi_uzemni_celky())
+    okresy = najdi_uzemni_celky()
+    for item in okresy:
+        rozdelene_html = bs(get(item).text, features="html.parser")
+        vsechny_h3 = rozdelene_html.find_all("h3")
+        for tag in vsechny_h3:
+            if "Okres: " in str(tag):
+                vsechny_mesta.append(tag[12:-6])
+
+
+
 
 if __name__ == "__main__":
     vysledky_hlasovani()
+
+
+
+
+
+
+
+
+
+
+
+
+url = 'https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=14&xnumnuts=8106'
+
+ 
+
