@@ -31,12 +31,14 @@ def vysledky_hlasovani():
         return okresy
     
     okresy = najdi_uzemni_celky()
+    vsechny_mesta = list()
     for item in okresy:
         rozdelene_html = bs(get(item).text, features="html.parser")
         vsechny_h3 = rozdelene_html.find_all("h3")
         for tag in vsechny_h3:
             if "Okres: " in str(tag):
                 vsechny_mesta.append(tag[12:-6])
+    print(vsechny_mesta)
 
 
 
