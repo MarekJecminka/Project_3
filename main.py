@@ -42,14 +42,38 @@ def vysledky_hlasovani():
 
     def odstran_diakritiku(jmena_okresu_csv):
         bez_diakritiky = list()
-        
-        return bez diakritiky
+        odstranit_diakritiku = {"á": "a",
+                                "č": "c",
+                                "ď": "d",
+                                "é": "e",
+                                "ě": "e",
+                                "í": "i",
+                                "ň": "n",
+                                "ó": "o",
+                                "ř": "r",
+                                "š": "s",
+                                "ť": "t",
+                                "ú": "u",
+                                "ý": "y",
+                                "ž": "z",
+                                }
+        for item in jmena_okresu_csv:
+            okres_csv = list()
+            for char in item:
+                csv = ""
+                if char in odstranit_diakritiku:
+                    csv += odstranit_diakritiku[char]
+                else:
+                    csv += char
+                okres_csv.append(csv)
+            bez_diakritiky.append(okres_csv)
+        return bez_diakritiky
 
     okresy = najdi_uzemni_celky()
     jmena_okresu_csv = vytvor_jmena_csv(okresy)
     jmena_okresu_csv_bez_diakritiky = odstran_diakritiku(jmena_okresu_csv)
     #print(okresy)
-    print(jmena_okresu_csv)
+    print(jmena_okresu_csv_bez_diakritiky)
 
 
     
