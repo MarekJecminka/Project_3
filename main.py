@@ -23,7 +23,7 @@ def vysledky_hlasovani():
                 okresy.append(base_url + item)
         return okresy
 
-    def najdi_uzemni_celky(url):
+    def najdi_uzemni_celky():
         rozdelene_html = rozdel_html(url)
         vsechny_celky = rozdelene_html.find_all("a")
         celky = najdi_celky(vsechny_celky)
@@ -31,33 +31,16 @@ def vysledky_hlasovani():
         return okresy
     
     okresy = najdi_uzemni_celky()
-    vsechny_mesta = list()
+    
+    vsechna_mesta = list()
     for item in okresy:
         rozdelene_html = bs(get(item).text, features="html.parser")
         vsechny_h3 = rozdelene_html.find_all("h3")
         for tag in vsechny_h3:
             if "Okres: " in str(tag):
-                vsechny_mesta.append(tag[12:-6])
-    print(vsechny_mesta)
-
-
-
+                vsechna_mesta.append(str(tag)[12:-6])
+    
+    print(vsechna_mesta)
 
 if __name__ == "__main__":
     vysledky_hlasovani()
-
-
-
-
-
-
-
-
-
-
-
-
-url = 'https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=14&xnumnuts=8106'
-
- 
-
