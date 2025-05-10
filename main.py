@@ -29,7 +29,39 @@ def vysledky_hlasovani():
         celky = najdi_celky(vsechny_celky)
         okresy = najdi_relevantni_okresy(celky)
         return okresy
+
+    def vytvor_jmena_csv(okresy):
+        vsechna_mesta = ["vysledky_praha.csv"]
+        for item in okresy:
+            rozdelene_html = bs(get(item).text, features="html.parser")
+            vsechny_h3 = rozdelene_html.find_all("h3")
+            for tag in vsechny_h3:
+                if "Okres: " in str(tag):
+                    vsechna_mesta.append(f"vysledky_{str(tag)[12:-6].lower()}.csv")
+        return vsechna_mesta    
+
+    def odstran_diakritiku(jmena_okresu_csv):
+        bez_diakritiky = list()
+        
+        return bez diakritiky
+
+    okresy = najdi_uzemni_celky()
+    jmena_okresu_csv = vytvor_jmena_csv(okresy)
+    jmena_okresu_csv_bez_diakritiky = odstran_diakritiku(jmena_okresu_csv)
+    #print(okresy)
+    print(jmena_okresu_csv)
+
+
     
+
+
+if __name__ == "__main__":
+    vysledky_hlasovani()
+
+
+
+
+"""
     def vytvor_jmena_csv(okresy):
         vsechna_mesta = list()
         for item in okresy:
@@ -39,30 +71,4 @@ def vysledky_hlasovani():
                 if "Okres: " in str(tag):
                     vsechna_mesta.append(f"vysledky_{str(tag)[12:-6].lower()}.csv")
         return vsechna_mesta
-    
-    okresy = najdi_uzemni_celky()
-    jmena_okresu_csv = vytvor_jmena_csv(okresy)
-    print(okresy)
-    print(jmena_okresu_csv)
-
-
-    
-    """
-    okresy = najdi_uzemni_celky()
-    jmena_obci_csv = vytvor_jmena_csv(okresy)
-    print(jmena_obci_csv)
-    
-    okresy = najdi_uzemni_celky()
-    
-    vsechna_mesta = list()
-    for item in okresy:
-        rozdelene_html = bs(get(item).text, features="html.parser")
-        vsechny_h3 = rozdelene_html.find_all("h3")
-        for tag in vsechny_h3:
-            if "Okres: " in str(tag):
-                vsechna_mesta.append(f"vysledky_{str(tag)[12:-6].lower()}.csv")
-    """
-    
-
-if __name__ == "__main__":
-    vysledky_hlasovani()
+"""
