@@ -38,7 +38,7 @@ def vysledky_hlasovani():
         vsechny_h3 = rozdelene_html.find_all("h3")
         for tag in vsechny_h3:
             if "Okres: " in str(tag):
-                vsechna_mesta.append(str(tag)[12:-6])
+                vsechna_mesta.append(f"vysledky_{str(tag)[12:-6].lower()}.csv")
     
     print(vsechna_mesta)
 
