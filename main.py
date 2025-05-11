@@ -1,4 +1,5 @@
 from requests import get
+import sys
 from bs4 import BeautifulSoup as bs
 
 
@@ -74,13 +75,26 @@ def vysledky_hlasovani():
             prihlasovaci_udaje[klic] = hodnota
         return prihlasovaci_udaje
 
+    def over_prihlasovaci_udaje(prihlasovaci_udaje):
+        while True:
+            if prihlasovaci_udaje[sys.argv[1]] == sys.argv[2]:
+                print("Přihlášení úspěsné.")
+                break
+            else:
+                print("Nesprávné systémové argumenty. Vlož správné systémové argumenty.")
+
     okresy = najdi_uzemni_celky()
     jmena_okresu_csv = vytvor_jmena_csv(okresy)
     jmena_okresu_csv_bez_diakritiky = odstran_diakritiku(jmena_okresu_csv)
     prihlasovaci_udaje = vytvor_prihlasovaci_udaje(okresy, jmena_okresu_csv_bez_diakritiky)
+    over_prihlasovaci_udaje(prihlasovaci_udaje)
 
-    print(prihlasovaci_udaje)
+
+    
 
 if __name__ == "__main__":
     vysledky_hlasovani()
+
+
+#'https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=1&xnumnuts=1100' 'vysledky_praha.csv'
 
