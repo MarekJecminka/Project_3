@@ -67,32 +67,19 @@ def vysledky_hlasovani():
                     csv += char
             bez_diakritiky.append(csv)
         return bez_diakritiky
+    
+    def vytvor_prihlasovaci_udaje(okresy, jmena_okresu_csv):
+        prihlasovaci_udaje = dict()
+        for klic, hodnota in zip(okresy, jmena_okresu_csv):
+            prihlasovaci_udaje.add(klic[hodnota])
+        return prihlasovaci_udaje
 
     okresy = najdi_uzemni_celky()
     jmena_okresu_csv = vytvor_jmena_csv(okresy)
     jmena_okresu_csv_bez_diakritiky = odstran_diakritiku(jmena_okresu_csv)
-    #print(okresy)
-    for item in jmena_okresu_csv_bez_diakritiky:
-        print(item)
-
-
-    
-
+    prihlasovaci_udaje = vytvor_prihlasovaci_udaje(okresy, jmena_okresu_csv)
+    print(prihlasovaci_udaje)
 
 if __name__ == "__main__":
     vysledky_hlasovani()
 
-
-
-
-"""
-    def vytvor_jmena_csv(okresy):
-        vsechna_mesta = list()
-        for item in okresy:
-            rozdelene_html = bs(get(item).text, features="html.parser")
-            vsechny_h3 = rozdelene_html.find_all("h3")
-            for tag in vsechny_h3:
-                if "Okres: " in str(tag):
-                    vsechna_mesta.append(f"vysledky_{str(tag)[12:-6].lower()}.csv")
-        return vsechna_mesta
-"""
