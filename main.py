@@ -68,16 +68,17 @@ def vysledky_hlasovani():
             bez_diakritiky.append(csv)
         return bez_diakritiky
     
-    def vytvor_prihlasovaci_udaje(okresy, jmena_okresu_csv):
+    def vytvor_prihlasovaci_udaje(okresy, csv):
         prihlasovaci_udaje = dict()
-        for klic, hodnota in zip(okresy, jmena_okresu_csv):
-            prihlasovaci_udaje.add(klic[hodnota])
+        for klic, hodnota in zip(okresy, csv):
+            prihlasovaci_udaje[klic] = hodnota
         return prihlasovaci_udaje
 
     okresy = najdi_uzemni_celky()
     jmena_okresu_csv = vytvor_jmena_csv(okresy)
     jmena_okresu_csv_bez_diakritiky = odstran_diakritiku(jmena_okresu_csv)
-    prihlasovaci_udaje = vytvor_prihlasovaci_udaje(okresy, jmena_okresu_csv)
+    prihlasovaci_udaje = vytvor_prihlasovaci_udaje(okresy, jmena_okresu_csv_bez_diakritiky)
+
     print(prihlasovaci_udaje)
 
 if __name__ == "__main__":
