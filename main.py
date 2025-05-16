@@ -31,9 +31,9 @@ def vysledky_hlasovani():
         okresy = najdi_relevantni_okresy(celky)
         return okresy
 
-    def vytvor_jmena_csv(okresy):
+    def vytvor_jmena_csv(okresy_url):
         vsechna_mesta = ["vysledky_praha.csv"]
-        for item in okresy:
+        for item in okresy_url:
             rozdelene_html = bs(get(item).text, features="html.parser")
             vsechny_h3 = rozdelene_html.find_all("h3")
             for tag in vsechny_h3:
@@ -69,19 +69,17 @@ def vysledky_hlasovani():
             bez_diakritiky.append(csv)
         return bez_diakritiky
     
-    def vytvor_prihlasovaci_udaje(okresy, csv):
+    def vytvor_prihlasovaci_udaje(okresy_pro_prihlaseni, csv_pro_prihlaseni):
         prihlasovaci_udaje = dict()
-        for klic, hodnota in zip(okresy, csv):
+        for klic, hodnota in zip(okresy_pro_prihlaseni, csv_pro_prihlaseni):
             prihlasovaci_udaje[klic] = hodnota
         return prihlasovaci_udaje
 
-    def over_prihlasovaci_udaje(prihlasovaci_udaje):
-        while True:
-            if prihlasovaci_udaje[sys.argv[1]] == sys.argv[2]:
-                print("Přihlášení úspěsné.")
-                break
-            else:
-                print("Nesprávné systémové argumenty. Vlož správné systémové argumenty.")
+    def over_prihlasovaci_udaje(udaje):
+        if udaje[sys.argv[1]] == sys.argv[2]:
+            print("Přihlášení úspěsné.")
+        else:
+            print("Nesprávné systémové argumenty. Vlož správné systémové argumenty.")
 
     okresy = najdi_uzemni_celky()
     jmena_okresu_csv = vytvor_jmena_csv(okresy)
@@ -89,12 +87,8 @@ def vysledky_hlasovani():
     prihlasovaci_udaje = vytvor_prihlasovaci_udaje(okresy, jmena_okresu_csv_bez_diakritiky)
     over_prihlasovaci_udaje(prihlasovaci_udaje)
 
-
-    
-
 if __name__ == "__main__":
     vysledky_hlasovani()
 
 
-#'https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=1&xnumnuts=1100' 'vysledky_praha.csv'
-
+#python project_3.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=1&xnumnuts=1100" "vysledky_praha.csv"
