@@ -76,19 +76,31 @@ def vysledky_hlasovani():
         return prihlasovaci_udaje
 
     def over_prihlasovaci_udaje(udaje):
-        if udaje[sys.argv[1]] == sys.argv[2]:
-            print("Přihlášení úspěsné.")
+        try:
+            udaje[sys.argv[1]] == sys.argv[2]
+        except KeyError:
+            return False
+        except:
+            return False
         else:
-            print("Nesprávné systémové argumenty. Vlož správné systémové argumenty.")
-
+            if udaje[sys.argv[1]] == sys.argv[2]:
+                return True
+            else:
+                return False
+    
+    print("Ověřuji systémové argumenty...")
     okresy = najdi_uzemni_celky()
     jmena_okresu_csv = vytvor_jmena_csv(okresy)
     jmena_okresu_csv_bez_diakritiky = odstran_diakritiku(jmena_okresu_csv)
     prihlasovaci_udaje = vytvor_prihlasovaci_udaje(okresy, jmena_okresu_csv_bez_diakritiky)
-    over_prihlasovaci_udaje(prihlasovaci_udaje)
+    spravne_udaje = over_prihlasovaci_udaje(prihlasovaci_udaje)
+    
+    if spravne_udaje == True:
+        print("Ukládám data.")
+    else:
+        print("Nesprávné systémové argumenty. Vlož správné systémové argumenty.")
 
-if __name__ == "__main__":
-    vysledky_hlasovani()
+vysledky_hlasovani()
 
 
 #python project_3.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=1&xnumnuts=1100" "vysledky_praha.csv"
