@@ -3,7 +3,7 @@ import sys
 from bs4 import BeautifulSoup as bs
 
 
-def vysledky_hlasovani():
+def vysledky_hlasovani(sys_arg1, sys_arg2):
     base_url = "https://www.volby.cz/pls/ps2017nss/"
     url = "https://www.volby.cz/pls/ps2017nss/ps3?xjazyk=CZ"
 
@@ -75,15 +75,15 @@ def vysledky_hlasovani():
             prihlasovaci_udaje[klic] = hodnota
         return prihlasovaci_udaje
 
-    def over_prihlasovaci_udaje(udaje):
+    def over_prihlasovaci_udaje(udaje, def_sys_arg1, def_sys_arg2):
         try:
-            udaje[sys.argv[1]] == sys.argv[2]
+            udaje[def_sys_arg1] == def_sys_arg2
         except KeyError:
             return False
-        except:
+        except IndexError:
             return False
         else:
-            if udaje[sys.argv[1]] == sys.argv[2]:
+            if udaje[def_sys_arg1] == def_sys_arg2:
                 return True
             else:
                 return False
@@ -93,14 +93,17 @@ def vysledky_hlasovani():
     jmena_okresu_csv = vytvor_jmena_csv(okresy)
     jmena_okresu_csv_bez_diakritiky = odstran_diakritiku(jmena_okresu_csv)
     prihlasovaci_udaje = vytvor_prihlasovaci_udaje(okresy, jmena_okresu_csv_bez_diakritiky)
-    spravne_udaje = over_prihlasovaci_udaje(prihlasovaci_udaje)
+    spravne_udaje = over_prihlasovaci_udaje(prihlasovaci_udaje, sys_arg1, sys_arg2)
     
     if spravne_udaje == True:
         print("Ukládám data.")
     else:
         print("Nesprávné systémové argumenty. Vlož správné systémové argumenty.")
 
-vysledky_hlasovani()
+systemovy_argument1 = sys.argv[1]
+systemovy_argument2 = sys.argv[2]
+vysledky_hlasovani(systemovy_argument1, systemovy_argument2)
 
+#Nefunguje případ, kdy systemový argument 1 je prázdný - OPRAVIT!!
 
-#python project_3.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=1&xnumnuts=1100" "vysledky_praha.csv"
+#python a.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=1&xnumnuts=1100" "vysledky_praha.csv"
