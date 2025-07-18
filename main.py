@@ -3,7 +3,7 @@ import sys
 from bs4 import BeautifulSoup as bs
 
 
-def vysledky_hlasovani(sys_arg1, sys_arg2):
+def vysledky_hlasovani():
     base_url = "https://www.volby.cz/pls/ps2017nss/"
     url = "https://www.volby.cz/pls/ps2017nss/ps3?xjazyk=CZ"
 
@@ -75,15 +75,15 @@ def vysledky_hlasovani(sys_arg1, sys_arg2):
             prihlasovaci_udaje[klic] = hodnota
         return prihlasovaci_udaje
 
-    def over_prihlasovaci_udaje(udaje, def_sys_arg1, def_sys_arg2):
+    def over_prihlasovaci_udaje(udaje):
         try:
-            udaje[def_sys_arg1] == def_sys_arg2
+            udaje[sys.argv[1]] == sys.argv[2]
         except KeyError:
             return False
-        except IndexError:
+        except:
             return False
         else:
-            if udaje[def_sys_arg1] == def_sys_arg2:
+            if udaje[sys.argv[1]] == sys.argv[2]:
                 return True
             else:
                 return False
@@ -93,53 +93,19 @@ def vysledky_hlasovani(sys_arg1, sys_arg2):
     jmena_okresu_csv = vytvor_jmena_csv(okresy)
     jmena_okresu_csv_bez_diakritiky = odstran_diakritiku(jmena_okresu_csv)
     prihlasovaci_udaje = vytvor_prihlasovaci_udaje(okresy, jmena_okresu_csv_bez_diakritiky)
-    spravne_udaje = over_prihlasovaci_udaje(prihlasovaci_udaje, sys_arg1, sys_arg2)
+    spravne_udaje = over_prihlasovaci_udaje(prihlasovaci_udaje)
     
     if spravne_udaje == True:
         print("Ukládám data.")
     else:
         print("Nesprávné systémové argumenty. Vlož správné systémové argumenty.")
 
-systemovy_argument1 = sys.argv[1]
-systemovy_argument2 = sys.argv[2]
-vysledky_hlasovani(systemovy_argument1, systemovy_argument2)
+vysledky_hlasovani()
+
 
 #Nefunguje případ, kdy systemový argument 1 je prázdný - OPRAVIT!!
 
 #python a.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=1&xnumnuts=1100" "vysledky_praha.csv"
 
-
-
-from requests import get
-import sys
-from bs4 import BeautifulSoup as bs
-
-#url = "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2101"
-url = "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=1&xnumnuts=1100"
-base_url = "https://www.volby.cz/pls/ps2017nss/"
-
-rozdelene_html = bs(get(url).text, features="html.parser")
-vsechny_a_tagy = rozdelene_html.find_all("a")
-
-link_obci = set()
-for a_tag in vsechny_a_tagy:
-    if "ps311" in str(a_tag):
-        link_obci.add(a_tag.attrs.get("href", "chybí odkaz"))
-
-for item in link_obci:
-    print(base_url + item)
-
-
-def ziskej_hodnoty_zahlavi(def_linky_obci):
-    pass
-
-def zpracuj_data(linky_obci, nazvy_zahlavi):
-    hodnoty_zahlavi = ziskej_hodnoty_zahlavi(linky_obci)
-    obce = list()
-    for item in len(linky_obci):
-        obec = dict()
-        for zahlavi in nazvy_zahlavi:
-            obec[zahlavi] = hodnoty_zahlavi
-        obce.append(obec)
-    return obce
-
+#https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2101 - okres Benešov
+#https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=2&xobec=529303&xvyber=2101 - obec Benešov
