@@ -109,3 +109,44 @@ vysledky_hlasovani()
 
 #https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2101 - okres Benešov
 #https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=2&xobec=529303&xvyber=2101 - obec Benešov
+
+
+
+
+
+
+
+
+
+from requests import get
+import sys
+from bs4 import BeautifulSoup as bs
+
+#url = "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2101"
+#base_url = "https://www.volby.cz/pls/ps2017nss/"
+
+#rozdelene_html = bs(get(url).text, features="html.parser")
+#a_tagy = rozdelene_html.find_all("a")
+
+#cisla_obci = list()
+
+#for a_tag in a_tagy:
+#    if "ps311" in str(a_tag):
+#        cisla_obci.append(a_tag.attrs.get("href", "chybí odkaz"))
+
+#for neco in cisla_obci:
+#    print(base_url + neco)
+
+
+url_obce = "https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=2&xobec=529303&xvyber=2101"
+
+rozdelene_html = bs(get(url_obce).text, features="html.parser")
+tag = rozdelene_html.find_all("table", {"class": "table"})
+vsechny_tr = tag[0].find_all("tr")
+td_na_radku = vsechny_tr[2].find_all("td")
+
+print(td_na_radku[0].text)
+
+
+#https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2101 - okres Benešov
+#https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=2&xobec=529303&xvyber=2101 - obec Benešov
