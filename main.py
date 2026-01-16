@@ -138,15 +138,30 @@ from bs4 import BeautifulSoup as bs
 #    print(base_url + neco)
 
 
-url_obce = "https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=2&xobec=529303&xvyber=2101"
+url_obce = "https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=3&xnumnuts=3104"
 
-rozdelene_html = bs(get(url_obce).text, features="html.parser")
-tag = rozdelene_html.find_all("table", {"class": "table"})
-vsechny_tr = tag[0].find_all("tr")
-td_na_radku = vsechny_tr[2].find_all("td")
+#rozdelene_html = bs(get(url_obce).text, features="html.parser")
+#tag = rozdelene_html.find_all("table", {"class": "table"})
+#vsechny_tr = tag[0].find_all("tr")
+#td_na_radku = vsechny_tr[2].find_all("td")
+#print(td_na_radku[0].text)
 
-print(td_na_radku[0].text)
-
+#print(rozdelene_html)
 
 #https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2101 - okres Benešov
 #https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=2&xobec=529303&xvyber=2101 - obec Benešov
+
+url_okresu = "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2101"
+rozdelene_html = bs(get(url_okresu).text, features="html.parser")
+vsechny_table = rozdelene_html.find_all("table", {"class": "table"})
+cisla_a_obce_vsech_tabulek = []
+for table in vsechny_table:
+    vsechny_tr = table.find_all("tr")
+    cisla_a_obce_jednotlivych_tabulek = []
+    for tr in vsechny_tr[2:]:
+        td_na_radku = tr.find_all("td")
+        cisla_a_obce_jednotlivych_tabulek.append(td_na_radku[0].text)
+        cisla_a_obce_jednotlivych_tabulek.append(td_na_radku[1].text)
+    cisla_a_obce_vsech_tabulek.append(cisla_a_obce_jednotlivych_tabulek)
+
+print(cisla_a_obce_vsech_tabulek)
