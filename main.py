@@ -111,13 +111,6 @@ vysledky_hlasovani()
 #https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=2&xobec=529303&xvyber=2101 - obec Benešov
 
 
-
-
-
-
-
-
-
 from requests import get
 import sys
 from bs4 import BeautifulSoup as bs
@@ -148,20 +141,21 @@ url_obce = "https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=3&xnumnuts=
 
 #print(rozdelene_html)
 
+
 #https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2101 - okres Benešov
 #https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=2&xobec=529303&xvyber=2101 - obec Benešov
 
-url_okresu = "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2101"
+url_okresu = "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2103"
 rozdelene_html = bs(get(url_okresu).text, features="html.parser")
 vsechny_table = rozdelene_html.find_all("table", {"class": "table"})
-cisla_a_obce_vsech_tabulek = []
+cisla_a_obce = []
 for table in vsechny_table:
     vsechny_tr = table.find_all("tr")
-    cisla_a_obce_jednotlivych_tabulek = []
     for tr in vsechny_tr[2:]:
         td_na_radku = tr.find_all("td")
-        cisla_a_obce_jednotlivych_tabulek.append(td_na_radku[0].text)
-        cisla_a_obce_jednotlivych_tabulek.append(td_na_radku[1].text)
-    cisla_a_obce_vsech_tabulek.append(cisla_a_obce_jednotlivych_tabulek)
+        if td_na_radku[0].text != "-":
+            cisla_a_obce.append(td_na_radku[0].text)
+        if td_na_radku[1].text != "-":
+            cisla_a_obce.append(td_na_radku[1].text)
 
-print(cisla_a_obce_vsech_tabulek)
+print(cisla_a_obce)
