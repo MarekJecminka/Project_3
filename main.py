@@ -88,11 +88,22 @@ def vysledky_hlasovani():
             else:
                 return False
     
-    def ziskej_code():
-        url_okresu = [sys.argv[1]]
+    def najdi_linky_obci():
+        url = sys.argv[1]
+        rozdelene_html = bs(get(url).text, features="html.parser")
+        a_tagy = rozdelene_html.find_all("a")
+        base_url = "https://www.volby.cz/pls/ps2017nss/"
+        linky_obci = list()
+        for a_tag in a_tagy:
+            if "ps311" in str(a_tag):
+                linky_obci.append(base_url + a_tag.attrs.get("href"))
+        return linky_obci
+    
+    def najdi_code():
+        code = dict()
+        url_okresu = sys.argv[1]
         rozdelene_html = bs(get(url_okresu).text, features="html.parser")
         vsechny_table = rozdelene_html.find_all("table", {"class": "table"})
-        code = dict()
         for table in vsechny_table:
             vsechny_tr = table.find_all("tr")
             for tr in vsechny_tr[2:]:
@@ -101,10 +112,28 @@ def vysledky_hlasovani():
                     code["code"] = td_na_radku[0].text
         return code
 
+    def najdi_location():
+        location = dict()
+        url_okresu = sys.argv[1]
+        rozdelene_html = bs(get(url_okresu).text, features="html.parser")
+        vsechny_table = rozdelene_html.find_all("table", {"class": "table"})
+        for table in vsechny_table:
+            vsechny_tr = table.find_all("tr")
+            for tr in vsechny_tr[2:]:
+                td_na_radku = tr.find_all("td")
+                if td_na_radku[1].text != "-":
+                    location["location"] = td_na_radku[1].text
+        return location
+
+
     def uloz_volebni_data():
-        code = ziskej_code()
-        
-        return
+        linky = najdi_linky_obci()
+        code = najdi_code()
+        location = najdi_location()
+        print(code)
+        print(location)
+
+
 
     print("Ověřuji systémové argumenty...")
     okresy = najdi_uzemni_celky()
@@ -127,8 +156,6 @@ vysledky_hlasovani()
 
 #python project_3.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2101" "vysledky_benesov.csv"
 #https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=2&xobec=529303&xvyber=2101 - obec Benešov
-
-
 
 
 
@@ -208,8 +235,6 @@ for table in tabulka_s_hlasy:
             volebni_ucast[td_na_radku[1].text] = td_na_radku[2].text
 
 print(volebni_ucast)
-
-
 
 
 
