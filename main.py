@@ -302,3 +302,25 @@ for table in tabulka_s_hlasy:
             volebni_ucast[td_na_radku[1].text] = td_na_radku[2].text
 
 print(volebni_ucast)
+
+
+
+
+
+
+    def najdi_location():
+        url_okresu = sys.argv[1]
+        rozdelene_html = bs(get(url_okresu).text, features="html.parser")
+        vsechny_table = rozdelene_html.find_all("table", {"class": "table"})
+        location = []
+        for table in vsechny_table:
+            vsechny_tr = table.find_all("tr")
+            konkretni_location_tabulky = []
+            for tr in vsechny_tr[2:]:
+                konkretni_location = dict()
+                td_na_radku = tr.find_all("td")
+                if td_na_radku[1].text != "-":
+                    konkretni_location["location"] = td_na_radku[1].text
+                konkretni_location_tabulky.append(konkretni_location)
+            location.append(konkretni_location_tabulky)
+        return location
