@@ -99,8 +99,8 @@ def vysledky_hlasovani():
                 linky_obci.append(base_url + a_tag.attrs.get("href"))
         return linky_obci
     
-    def najdi_code():
-        code = dict()
+    def najdi_code_a_location():
+        code_a_location = dict()
         url_okresu = sys.argv[1]
         rozdelene_html = bs(get(url_okresu).text, features="html.parser")
         vsechny_table = rozdelene_html.find_all("table", {"class": "table"})
@@ -109,29 +109,24 @@ def vysledky_hlasovani():
             for tr in vsechny_tr[2:]:
                 td_na_radku = tr.find_all("td")
                 if td_na_radku[0].text != "-":
-                    code["code"] = td_na_radku[0].text
-        return code
-
-    def najdi_location():
-        location = dict()
-        url_okresu = sys.argv[1]
-        rozdelene_html = bs(get(url_okresu).text, features="html.parser")
-        vsechny_table = rozdelene_html.find_all("table", {"class": "table"})
-        for table in vsechny_table:
-            vsechny_tr = table.find_all("tr")
-            for tr in vsechny_tr[2:]:
-                td_na_radku = tr.find_all("td")
+                    code_a_location["code"] = td_na_radku[0].text
                 if td_na_radku[1].text != "-":
-                    location["location"] = td_na_radku[1].text
-        return location
-
+                    code_a_location["location"] = td_na_radku[1].text
+        return code_a_location
 
     def uloz_volebni_data():
         linky = najdi_linky_obci()
-        code = najdi_code()
-        location = najdi_location()
-        print(code)
-        print(location)
+        data = []
+        for link in linky:
+            data_o_obci = dict()
+            code_a_location = najdi_code_a_location(link)
+            data_o_obci.update(code_a_location)
+            volebni_ucast = najdi_volebni_ucast(link)
+            data_o_obci.update(volebni_ucast)
+            hlasy_stran = najdi_hlasy_stran(link)
+            data_o_obci.update(hlasy_stran)
+            data.append(data_o_obci)
+        return data
 
 
 
@@ -156,6 +151,7 @@ vysledky_hlasovani()
 
 #python project_3.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2101" "vysledky_benesov.csv"
 #https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=2&xobec=529303&xvyber=2101 - obec Benešov
+
 
 
 
