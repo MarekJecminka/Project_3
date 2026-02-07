@@ -1,6 +1,7 @@
 from requests import get
 import sys
 from bs4 import BeautifulSoup as bs
+import csv
 
 
 def vysledky_hlasovani():
@@ -107,14 +108,13 @@ def vysledky_hlasovani():
         for table in vsechny_table:
             vsechny_tr = table.find_all("tr")
             for tr in vsechny_tr[2:]:
-                code_a_location_radku = dict()
+                code_a_location_radku = []
                 td_na_radku = tr.find_all("td")
                 if td_na_radku[0].text != "-":
-                    code_a_location_radku["code"] = td_na_radku[0].text
+                    code_a_location_radku.append(td_na_radku[0].text)
                 if td_na_radku[1].text != "-":
-                    code_a_location_radku["location"] = td_na_radku[1].text
-                code_a_location_radku_list = [code_a_location_radku]
-                code_a_location_tabulek.append(code_a_location_radku_list)
+                    code_a_location_radku.append(td_na_radku[1].text)
+                code_a_location_tabulek.append(code_a_location_radku)
         return code_a_location_tabulek
     
     def najdi_volebni_ucast(linky_obci):
@@ -125,50 +125,74 @@ def vysledky_hlasovani():
             vsechny_table = rozdelene_html.find_all("table", {"class":"table"})
             vsechny_tr = vsechny_table[0].find_all("tr")
             td_na_radku = vsechny_tr[2].find_all("td")
-            volebni_ucast_obce = dict()
-            volebni_ucast_obce["registered"] = str(td_na_radku[3].text)
-            volebni_ucast_obce["envelopes"] = str(td_na_radku[4].text)
-            volebni_ucast_obce["valid"] = str(td_na_radku[7].text)
-            volebni_ucast_obce_list = [volebni_ucast_obce]
-            volebni_ucast.append(volebni_ucast_obce_list)
+            volebni_ucast_obce = []
+            volebni_ucast_obce.append(td_na_radku[3].text)
+            volebni_ucast_obce.append(td_na_radku[4].text)
+            volebni_ucast_obce.append(td_na_radku[7].text)
+            volebni_ucast.append(volebni_ucast_obce)
         return volebni_ucast
     
     def najdi_hlasy_stran(linky_obci):
         hlasy_stran = []
+        klice = []
         for link in linky_obci:
             url_obce = link
             rozdelene_html = bs(get(url_obce).text, features="html.parser")
             vsechny_table = rozdelene_html.find_all("table", {"class":"table"})
-            hlasy_stran_obci = dict()
+            hlasy_stran_obce = []
+            klice_obce = ["code", "location", "registered", "envelopes", "valid"]
             tabulka_s_hlasy = vsechny_table[1:]
             for table in tabulka_s_hlasy:
                 vsechny_tr = table.find_all("tr")
                 for tr in vsechny_tr[2:]:
                     td_na_radku = tr.find_all("td")
                     if td_na_radku[1].text != "-":
-                        hlasy_stran_obci[td_na_radku[1].text] = td_na_radku[2].text
-            hlasy_stran_obci_list = [hlasy_stran_obci]
-            hlasy_stran.append(hlasy_stran_obci_list)
-        return hlasy_stran
+                        hlasy_stran_obce.append(td_na_radku[2].text)
+                    if td_na_radku[1].text != "-":
+                        klice_obce.append(td_na_radku[1].text)
+            hlasy_stran.append(hlasy_stran_obce)
+            klice.append(klice_obce)
+        return [hlasy_stran, klice[0]]
+
+    def spoj_data_obci(code_a_location_obci, volebni_ucast_obci, hlasy_stran_obci):
+        data_obci = []
+        for code, ucast, hlasy in zip(code_a_location_obci, volebni_ucast_obci, hlasy_stran_obci):
+            data_obce = []
+            for item in code:
+                data_obce.append(item)
+            for item in ucast:
+                data_obce.append(item)
+            for item in hlasy:
+                data_obce.append(item)
+            data_obci.append(data_obce)
+        return data_obci
+
+    def prirad_klice_k_datum(klice_dat, data):
+        data_obci = []
+        for obec in data:
+            data_obce = {}
+            for klic, hodnota in zip(klice_dat, obec):
+                data_obce[klic] = hodnota
+            data_obci.append(data_obce)
+        return data_obci
     
-    def spoj_data(code_a_location_obci, volebni_ucast_obci, hlasy_stran_obci):
-        data = []
-        for i in range(len(code_a_location_obci)):
-            data_obce = dict()
-            data_obce.update(code_a_location_obci[i])
-            data_obce.update(volebni_ucast_obci[i])
-            data_obce.update(hlasy_stran_obci[i])
-            data.append(data_obce)
-        return data
+    def zapis_data_do_csv(data_csv, klice_csv):
+        soubor_csv = open(f"{sys.argv[2]}", mode="w", newline="", encoding="utf-8-sig")
+        zahlavi = klice_csv
+        zapisovac = csv.DictWriter(soubor_csv, fieldnames=zahlavi)
+        zapisovac.writeheader()
+        zapisovac.writerows(data_csv)
+        soubor_csv.close()
 
     def uloz_volebni_data():
         linky = najdi_linky_obci()
         code_a_location = najdi_code_a_location()
         volebni_ucast = najdi_volebni_ucast(linky)
-        hlasy_stran = najdi_hlasy_stran(linky)
-        print(hlasy_stran)
-        data = spoj_data(code_a_location, volebni_ucast, hlasy_stran)
-        print(data)
+        hlasy_stran = najdi_hlasy_stran(linky)[0]
+        klice = najdi_hlasy_stran(linky)[1]
+        data_list = spoj_data_obci(code_a_location, volebni_ucast, hlasy_stran)
+        data = prirad_klice_k_datum(klice, data_list)
+        zapis_data_do_csv(data, klice)
 
     print("Ověřuji systémové argumenty...")
     okresy = najdi_uzemni_celky()
@@ -193,96 +217,3 @@ vysledky_hlasovani()
 #https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=2&xobec=529303&xvyber=2101 - obec Benešov
 
 
-
-
-
-
-
-from requests import get
-import sys
-from bs4 import BeautifulSoup as bs
-
-#url = "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2101"
-#base_url = "https://www.volby.cz/pls/ps2017nss/"
-
-#rozdelene_html = bs(get(url).text, features="html.parser")
-#a_tagy = rozdelene_html.find_all("a")
-
-#cisla_obci = list()
-
-#for a_tag in a_tagy:
-#    if "ps311" in str(a_tag):
-#        cisla_obci.append(a_tag.attrs.get("href", "chybí odkaz"))
-
-#for neco in cisla_obci:
-#    print(base_url + neco)
-
-
-url_obce = "https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=3&xnumnuts=3104"
-
-#rozdelene_html = bs(get(url_obce).text, features="html.parser")
-#tag = rozdelene_html.find_all("table", {"class": "table"})
-#vsechny_tr = tag[0].find_all("tr")
-#td_na_radku = vsechny_tr[2].find_all("td")
-#print(td_na_radku[0].text)
-
-#print(rozdelene_html)
-
-
-#https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2101 - okres Benešov
-#https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=2&xobec=529303&xvyber=2101 - obec Benešov
-
-#url_okresu = "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2103"
-#rozdelene_html = bs(get(url_okresu).text, features="html.parser")
-#vsechny_table = rozdelene_html.find_all("table", {"class": "table"})
-#cisla_a_obce = []
-#for table in vsechny_table:
-#    vsechny_tr = table.find_all("tr")
-#    for tr in vsechny_tr[2:]:
-#        td_na_radku = tr.find_all("td")
-#        if td_na_radku[0].text != "-":
-#            cisla_a_obce.append(td_na_radku[0].text)
-#        if td_na_radku[1].text != "-":
-#            cisla_a_obce.append(td_na_radku[1].text)
-
-#print(cisla_a_obce)
-
-
-url_obce = "https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=1&xobec=500054&xvyber=1100"
-rozdelene_html = bs(get(url_obce).text, features="html.parser")
-vsechny_table = rozdelene_html.find_all("table", {"class":"table"})
-#vsechny_tr = vsechny_table[0].find_all("tr")
-#td_na_radku = vsechny_tr[2].find_all("td")
-volebni_ucast = dict()
-#volebni_ucast["registered"] = str(td_na_radku[3].text)
-#volebni_ucast["envelopes"] = str(td_na_radku[4].text)
-#volebni_ucast["valid"] = str(td_na_radku[7].text)
-
-#text = "7\\xa258"
-#if "\\xa" in text:
-#    novy_text = text.replace("\\xa", "")
-
-#tabulka_s_hlasy = vsechny_table[1:]
-#for table in tabulka_s_hlasy:
-#    vsechny_tr = table.find_all("tr")
-#    for tr in vsechny_tr[2:]:
-#        td_na_radku = tr.find_all("td")
-#        if td_na_radku[1].text != "-":
-#            volebni_ucast[td_na_radku[1].text] = td_na_radku[2].text
-
-#print(volebni_ucast)
-
-code_a_location_obci = [[{"code": "123", "location": "abc"}], [{"code": "345", "location": "def"}]]
-volebni_ucast_obci = [[{"registered": "123", "envelopes": "123", "valid": "123"}], [{"registered": "456", "envelopes": "456", "valid": "456"}]]
-hlasy_stran_obci = [[{"ABC": "123", "DEF": "456", "GHI": "789"}], [{"JKL": "123", "MNO": "456", "PQR": "789"}]]
-
-
-data = []
-for i in range(1):
-    data_obce = []
-    for kod, ucast, hlasy in zip(code_a_location_obci[i], volebni_ucast_obci[i], hlasy_stran_obci[i]):
-        data_obce.append(kod)
-        data_obce.append(ucast)
-        data_obce.append(hlasy)
-    data.append(data_obce)
-print(data)
