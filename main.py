@@ -3,7 +3,6 @@ import sys
 from bs4 import BeautifulSoup as bs
 import csv
 
-
 def vysledky_hlasovani():
     base_url = "https://www.volby.cz/pls/ps2017nss/"
     url = "https://www.volby.cz/pls/ps2017nss/ps3?xjazyk=CZ"
@@ -220,6 +219,14 @@ vysledky_hlasovani()
 #python project_3.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=1&xnumnuts=1100" "vysledky_praha.csv"
 
 #python project_3.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2101" "vysledky_benesov.csv"
-#https://www.volby.cz/pls/ps2017nss/ps311?xjazyk=CZ&xkraj=2&xobec=529303&xvyber=2101 - obec Benešov
+
+#python project_3.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2112" "vysledky_rakovnik.csv"
+
+#python project_3.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=14&xnumnuts=8103" "vysledky_karvina.csv"
+
+
+
+
+
 
 
