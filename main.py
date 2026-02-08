@@ -94,11 +94,17 @@ def vysledky_hlasovani():
         rozdelene_html = bs(get(url).text, features="html.parser")
         a_tagy = rozdelene_html.find_all("a")
         base_url = "https://www.volby.cz/pls/ps2017nss/"
-        linky_obci = list()
+        linky_obci = []
+        linky = []
         for a_tag in a_tagy:
             if "ps311" in str(a_tag):
                 linky_obci.append(base_url + a_tag.attrs.get("href"))
-        return linky_obci
+        for link in linky_obci:
+            if link in linky:
+                continue
+            else:
+                linky.append(link)
+        return linky
     
     def najdi_code_a_location():
         url_okresu = sys.argv[1]
