@@ -1,7 +1,9 @@
-from requests import get
 import sys
-from bs4 import BeautifulSoup as bs
 import csv
+
+from requests import get
+from bs4 import BeautifulSoup as bs
+
 
 def vysledky_hlasovani():
     base_url = "https://www.volby.cz/pls/ps2017nss/"
