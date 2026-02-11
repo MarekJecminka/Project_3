@@ -4,7 +4,6 @@ import csv
 from requests import get
 from bs4 import BeautifulSoup as bs
 
-
 def vysledky_hlasovani():
     base_url = "https://www.volby.cz/pls/ps2017nss/"
     url = "https://www.volby.cz/pls/ps2017nss/ps3?xjazyk=CZ"
@@ -76,8 +75,7 @@ def vysledky_hlasovani():
                 return False
     
     def najdi_linky_obci():
-        url = sys.argv[1]
-        rozdelene_html = bs(get(url).text, features="html.parser")
+        rozdelene_html = bs(get(sys.argv[1]).text, features="html.parser")
         a_tagy = rozdelene_html.find_all("a")
         base_url = "https://www.volby.cz/pls/ps2017nss/"
         linky_obci = []
@@ -93,8 +91,7 @@ def vysledky_hlasovani():
         return linky
     
     def najdi_code_a_location():
-        url_okresu = sys.argv[1]
-        rozdelene_html = bs(get(url_okresu).text, features="html.parser")
+        rozdelene_html = bs(get(sys.argv[1]).text, features="html.parser")
         vsechny_table = rozdelene_html.find_all("table", {"class": "table"})
         code_a_location_tabulek = []
         for table in vsechny_table:
