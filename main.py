@@ -361,9 +361,7 @@ def vysledky_hlasovani():
     def prirad_klice_k_datum(klice_dat, data):
         data_obci = []
         for obec in data:
-            data_obce = {}
-            for klic, hodnota in zip(klice_dat, obec):
-                data_obce[klic] = hodnota
+            data_obce = {data_obce[klic] = hodnota for klic, hodnota in zip(klice_dat, obec)}
             data_obci.append(data_obce)
         return data_obci
     
