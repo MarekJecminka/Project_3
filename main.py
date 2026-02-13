@@ -337,22 +337,12 @@ def vysledky_hlasovani():
     def spoj_data_obci(code_a_location_obci, volebni_ucast_obci, hlasy_stran_obci):
         data_obci = []
         for code, ucast, hlasy in zip(code_a_location_obci, volebni_ucast_obci, hlasy_stran_obci):
-            data_obce = []
-            for item in code:
-                data_obce.append(item)
-            for item in ucast:
-                data_obce.append(item)
-            for item in hlasy:
-                data_obce.append(item)
+            data_obce = [item for item in code, item for item in ucast, item for item in hlasy]
             data_obci.append(data_obce)
         return data_obci
 
     def prirad_klice_k_datum(klice_dat, data):
-        data_obci = []
-        for obec in data:
-            data_obce = {data_obce[klic] = hodnota for klic, hodnota in zip(klice_dat, obec)}
-            data_obci.append(data_obce)
-        return data_obci
+        return [{data_obce[klic] = hodnota for klic, hodnota in zip(klice_dat, obec)} for obec in data]
     
     def zapis_data_do_csv(data_csv, klice_csv):
         soubor_csv = open(f"{sys.argv[2]}", mode="w", newline="", encoding="utf-8-sig")
