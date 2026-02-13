@@ -247,12 +247,7 @@ def vysledky_hlasovani():
         bez_diakritiky = []
         odstranit_diakritiku = {"á": "a", "č": "c", "ď": "d", "é": "e", "ě": "e", "í": "i", "ň": "n", "ó": "o", "ř": "r", "š": "s", "ť": "t", "ú": "u", "ů": "u", "ý": "y", "ž": "z",}
         for item in jmena_okresu_csv:
-            csv = "".join(
-            for char in item:
-                if char in odstranit_diakritiku:
-                    csv += odstranit_diakritiku[char]
-                else:
-                    csv += char
+            csv = "".join(odstranit_diakritiku[char] if char in odstranit_diakritiku else char for char in item)
             bez_diakritiky.append(csv)
         return bez_diakritiky
 
