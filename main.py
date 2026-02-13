@@ -226,22 +226,11 @@ def vysledky_hlasovani():
     base_url = "https://www.volby.cz/pls/ps2017nss/"
     url = "https://www.volby.cz/pls/ps2017nss/ps3?xjazyk=CZ"
 
-    def rozdel_html(odkaz):
-        return bs(get(odkaz).text, features="html.parser")
-    
-    def najdi_celky(celky):
-        uzemni_celky = [uzemni_celky.append(a_tag.attrs.get("href", "chybí odkaz")) if "xnumnuts" in str(a_tag) for a_tag in celky]
-        return uzemni_celky
-    
-    def najdi_relevantni_okresy(celky):
-        okresy = [okresy.append(base_url + item) if "ps32" in item for item in celky]
-        return okresy
-
     def najdi_uzemni_celky():
-        rozdelene_html = rozdel_html(url)
+        rozdelene_html = bs(get(url).text, features="html.parser")
         vsechny_celky = rozdelene_html.find_all("a")
-        celky = najdi_celky(vsechny_celky)
-        okresy = najdi_relevantni_okresy(celky)
+        celky = [a_tag.attrs.get("href", "chybí odkaz") if "xnumnuts" in str(a_tag) for a_tag in celky]
+        okresy = [base_url + item if "ps32" in item for item in celky]
         return okresy
 
     def vytvor_jmena_csv(okresy_url):
