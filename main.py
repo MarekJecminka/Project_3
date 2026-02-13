@@ -255,10 +255,6 @@ def vysledky_hlasovani():
                     csv += char
             bez_diakritiky.append(csv)
         return bez_diakritiky
-    
-    def vytvor_prihlasovaci_udaje(okresy_pro_prihlaseni, csv_pro_prihlaseni):
-        prihlasovaci_udaje = {prihlasovaci_udaje[klic] = hodnota for klic, hodnota in zip(okresy_pro_prihlaseni, csv_pro_prihlaseni)}
-        return prihlasovaci_udaje
 
     def over_prihlasovaci_udaje(udaje):
         try:
@@ -305,10 +301,7 @@ def vysledky_hlasovani():
             vsechny_table = rozdelene_html.find_all("table", {"class":"table"})
             vsechny_tr = vsechny_table[0].find_all("tr")
             td_na_radku = vsechny_tr[2].find_all("td")
-            volebni_ucast_obce = []
-            volebni_ucast_obce.append(td_na_radku[3].text)
-            volebni_ucast_obce.append(td_na_radku[4].text)
-            volebni_ucast_obce.append(td_na_radku[7].text)
+            volebni_ucast_obce = [td_na_radku[3].text, td_na_radku[4].text, td_na_radku[7].text]
             volebni_ucast.append(volebni_ucast_obce)
         return volebni_ucast
     
@@ -340,9 +333,6 @@ def vysledky_hlasovani():
             data_obce = [item for item in code, item for item in ucast, item for item in hlasy]
             data_obci.append(data_obce)
         return data_obci
-
-    def prirad_klice_k_datum(klice_dat, data):
-        return [{data_obce[klic] = hodnota for klic, hodnota in zip(klice_dat, obec)} for obec in data]
     
     def zapis_data_do_csv(data_csv, klice_csv):
         soubor_csv = open(f"{sys.argv[2]}", mode="w", newline="", encoding="utf-8-sig")
@@ -359,14 +349,14 @@ def vysledky_hlasovani():
         hlasy_stran = najdi_hlasy_stran(linky)[0]
         klice = najdi_hlasy_stran(linky)[1]
         data_list = spoj_data_obci(code_a_location, volebni_ucast, hlasy_stran)
-        data = prirad_klice_k_datum(klice, data_list)
+        data = [{[klic] = hodnota for klic, hodnota in zip(klice, obec)} for obec in data_list]
         zapis_data_do_csv(data, klice)
 
     print("Ověřuji systémové argumenty...")
     okresy = najdi_uzemni_celky()
     jmena_okresu_csv = vytvor_jmena_csv(okresy)
     jmena_okresu_csv_bez_diakritiky = odstran_diakritiku(jmena_okresu_csv)
-    prihlasovaci_udaje = vytvor_prihlasovaci_udaje(okresy, jmena_okresu_csv_bez_diakritiky)
+    prihlasovaci_udaje = {[klic] = hodnota for klic, hodnota in zip(okresy, jmena_okresu_csv_bez_diakritiky)}
     spravne_udaje = over_prihlasovaci_udaje(prihlasovaci_udaje)
     
     if spravne_udaje:
