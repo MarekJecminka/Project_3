@@ -229,9 +229,8 @@ def vysledky_hlasovani():
     def najdi_uzemni_celky():
         rozdelene_html = bs(get(url).text, features="html.parser")
         vsechny_celky = rozdelene_html.find_all("a")
-        celky = [a_tag.attrs.get("href", "chybí odkaz") if "xnumnuts" in str(a_tag) for a_tag in celky]
-        okresy = [base_url + item if "ps32" in item for item in celky]
-        return okresy
+        celky = [a_tag.attrs.get("href", "chybí odkaz") for a_tag in vsechny_celky if "xnumnuts" in str(a_tag)]
+        return [base_url + item for item in celky if "ps32" in item]
 
     def vytvor_jmena_csv(okresy_url):
         vsechny_okresy = ["vysledky_praha.csv"]
@@ -245,9 +244,15 @@ def vysledky_hlasovani():
 
     def odstran_diakritiku(jmena_okresu_csv):
         bez_diakritiky = []
-        odstranit_diakritiku = {"á": "a", "č": "c", "ď": "d", "é": "e", "ě": "e", "í": "i", "ň": "n", "ó": "o", "ř": "r", "š": "s", "ť": "t", "ú": "u", "ů": "u", "ý": "y", "ž": "z",}
+        odstranit_diakritiku = {"á":"a","č":"c","ď":"d","é":"e","ě":"e","í":"i","ň":"n","ó":"o",
+                                "ř":"r","š":"s","ť":"t","ú":"u","ů":"u","ý":"y","ž":"z"}
         for item in jmena_okresu_csv:
-            csv = "".join(odstranit_diakritiku[char] if char in odstranit_diakritiku else char for char in item)
+            csv = ""
+            for char in item:
+                if char in odstranit_diakritiku:
+                    csv += odstranit_diakritiku[char]
+                else:
+                    csv += char
             bez_diakritiky.append(csv)
         return bez_diakritiky
 
@@ -265,15 +270,22 @@ def vysledky_hlasovani():
                 return False
     
     def najdi_linky_obci():
-        rozdelene_html = bs(get(sys.argv[1]).text, features="html.parser")
+        url = sys.argv[1]
+        rozdelene_html = bs(get(url).text, features="html.parser")
         a_tagy = rozdelene_html.find_all("a")
         base_url = "https://www.volby.cz/pls/ps2017nss/"
-        linky_obci = [base_url + a_tag.attrs.get("href") if "ps311" in str(a_tag) for a_tag in a_tagy]
-        linky = [continue if link in linky else link for link in linky_obci]    
+        linky_obci = [base_url + a_tag.attrs.get("href") for a_tag in a_tagy if "ps311" in str(a_tag)]
+        linky = []
+        for link in linky_obci:
+            if link in linky:
+                continue
+            else:
+                linky.append(link)
         return linky
     
     def najdi_code_a_location():
-        rozdelene_html = bs(get(sys.argv[1]).text, features="html.parser")
+        url_okresu = sys.argv[1]
+        rozdelene_html = bs(get(url_okresu).text, features="html.parser")
         vsechny_table = rozdelene_html.find_all("table", {"class": "table"})
         code_a_location_tabulek = []
         for table in vsechny_table:
@@ -325,7 +337,20 @@ def vysledky_hlasovani():
     def spoj_data_obci(code_a_location_obci, volebni_ucast_obci, hlasy_stran_obci):
         data_obci = []
         for code, ucast, hlasy in zip(code_a_location_obci, volebni_ucast_obci, hlasy_stran_obci):
-            data_obce = [item for item in code, item for item in ucast, item for item in hlasy]
+            data_obce = []
+            for item in code:
+                data_obce.append(item)
+            for item in ucast:
+                data_obce.append(item)
+            for item in hlasy:
+                data_obce.append(item)
+            data_obci.append(data_obce)
+        return data_obci
+
+    def prirad_klice_k_datum(klice_dat, data):
+        data_obci = []
+        for obec in data:
+            data_obce = {klic: hodnota for klic, hodnota in zip(klice_dat, obec)}
             data_obci.append(data_obce)
         return data_obci
     
@@ -344,14 +369,14 @@ def vysledky_hlasovani():
         hlasy_stran = najdi_hlasy_stran(linky)[0]
         klice = najdi_hlasy_stran(linky)[1]
         data_list = spoj_data_obci(code_a_location, volebni_ucast, hlasy_stran)
-        data = [{[klic] = hodnota for klic, hodnota in zip(klice, obec)} for obec in data_list]
+        data = prirad_klice_k_datum(klice, data_list)
         zapis_data_do_csv(data, klice)
 
     print("Ověřuji systémové argumenty...")
     okresy = najdi_uzemni_celky()
     jmena_okresu_csv = vytvor_jmena_csv(okresy)
     jmena_okresu_csv_bez_diakritiky = odstran_diakritiku(jmena_okresu_csv)
-    prihlasovaci_udaje = {[klic] = hodnota for klic, hodnota in zip(okresy, jmena_okresu_csv_bez_diakritiky)}
+    prihlasovaci_udaje = {klic: hodnota for klic, hodnota in zip(okresy, jmena_okresu_csv_bez_diakritiky)}
     spravne_udaje = over_prihlasovaci_udaje(prihlasovaci_udaje)
     
     if spravne_udaje:
@@ -362,4 +387,13 @@ def vysledky_hlasovani():
 
 vysledky_hlasovani()
 
+
+
+#python project_3_comprehensions.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=1&xnumnuts=1100" "vysledky_praha.csv"
+
+#python project_3_comprehensions.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2101" "vysledky_benesov.csv"
+
+#python project_3_comprehensions.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2112" "vysledky_rakovnik.csv"
+
+#python project_3_comprehensions.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=14&xnumnuts=8103" "vysledky_karvina.csv"
 
