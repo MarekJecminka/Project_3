@@ -247,12 +247,7 @@ def vysledky_hlasovani():
         odstranit_diakritiku = {"á":"a","č":"c","ď":"d","é":"e","ě":"e","í":"i","ň":"n","ó":"o",
                                 "ř":"r","š":"s","ť":"t","ú":"u","ů":"u","ý":"y","ž":"z"}
         for item in jmena_okresu_csv:
-            csv = ""
-            for char in item:
-                if char in odstranit_diakritiku:
-                    csv += odstranit_diakritiku[char]
-                else:
-                    csv += char
+            csv = "".join(odstranit_diakritiku[char] if char in odstranit_diakritiku else char for char in item)
             bez_diakritiky.append(csv)
         return bez_diakritiky
 
@@ -380,8 +375,9 @@ def vysledky_hlasovani():
     spravne_udaje = over_prihlasovaci_udaje(prihlasovaci_udaje)
     
     if spravne_udaje:
-        print("Ukládám data.")
+        print("Ukládám data...")
         uloz_volebni_data()
+        print("Ukládání dokončeno.")
     else:
         print("Nesprávné systémové argumenty. Vlož správné systémové argumenty.")
 
@@ -396,4 +392,3 @@ vysledky_hlasovani()
 #python project_3_comprehensions.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=2112" "vysledky_rakovnik.csv"
 
 #python project_3_comprehensions.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=14&xnumnuts=8103" "vysledky_karvina.csv"
-
