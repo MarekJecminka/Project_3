@@ -1,3 +1,10 @@
+"""
+projekt_3.py: třetí projekt do Engeto Online Python Akademie
+
+author: Marek Ječmínka
+email: jecminkam@seznam.cz
+"""
+
 import sys
 import csv
 
