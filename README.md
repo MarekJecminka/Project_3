@@ -1,4 +1,4 @@
-# Elections Scraper (Výsledky voleb 2017)
+# Project 3: Elections Scraper (Výsledky voleb 2017)
 
 Tento projekt slouží ke stahování a zpracování výsledků voleb do Poslanecké sněmovny ČR z roku 2017 pro vybraný územní celek přímo z webu [volby.cz](https://www.volby.cz/).
 
