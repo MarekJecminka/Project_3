@@ -4,7 +4,7 @@ Tento projekt slouží ke stahování a zpracování výsledků voleb do Poslane
 
 ## Instalace knihoven
 
-Pro správný chod skriptu je nutné mít nainstalované závislosti uvedené v souboru `requirements.txt`. Doporučujeme vytvořit a aktivovat virtuální prostředí:
+Pro správný chod skriptu je nutné mít nainstalované knihovny ze souboru `requirements.txt`. Je nutné vytvořit a aktivovat virtuální prostředí:
 
 ```bash
 # Vytvoření virtuálního prostředí
