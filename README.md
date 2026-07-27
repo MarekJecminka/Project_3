@@ -2,7 +2,7 @@
 
 Tento projekt slouží ke stahování a zpracování výsledků voleb do Poslanecké sněmovny ČR z roku 2017 pro vybraný územní celek přímo z webu [volby.cz](https://www.volby.cz/).
 
-## Instalace knihooven
+## Instalace knihoven
 
 Pro správný chod skriptu je nutné mít nainstalované závislosti uvedené v souboru `requirements.txt`. Doporučujeme vytvořit a aktivovat virtuální prostředí:
 
