@@ -1,12 +1,12 @@
-# Project_3: Elections Scraper (Výsledky voleb 2017)
+# Elections Scraper (Výsledky voleb 2017)
 
-Tento projekt slouží ke stahování a zpracování výsledků voleb do Poslanecké sněmovny ČR z roku 2017 pro vybraný územní celek přímo z webu https://www.volby.cz.
+Tento projekt slouží ke stahování a zpracování výsledků voleb do Poslanecké sněmovny ČR z roku 2017 pro vybraný územní celek přímo z webu [volby.cz](https://www.volby.cz/).
 
-# Instalace knihoven
+## Instalace knihooven
 
 Pro správný chod skriptu je nutné mít nainstalované závislosti uvedené v souboru `requirements.txt`. Doporučujeme vytvořit a aktivovat virtuální prostředí:
 
-Bash
+```bash
 # Vytvoření virtuálního prostředí
 python -m venv venv
 
