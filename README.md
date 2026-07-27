@@ -1,1 +1,41 @@
-# Project_3
+# Project_3: Elections Scraper (Výsledky voleb 2017)
+
+Tento projekt slouží ke stahování a zpracování výsledků voleb do Poslanecké sněmovny ČR z roku 2017 pro vybraný územní celek přímo z webu https://www.volby.cz.
+
+# Instalace knihoven
+
+Pro správný chod skriptu je nutné mít nainstalované závislosti uvedené v souboru `requirements.txt`. Doporučujeme vytvořit a aktivovat virtuální prostředí:
+
+Bash
+# Vytvoření virtuálního prostředí
+python -m venv venv
+
+# Aktivace (Windows)
+.\venv\Scripts\activate
+
+# Aktivace (Linux / macOS)
+source venv/bin/activate
+
+# Instalace potřebných knihoven
+pip install -r requirements.txt
+Spuštění projektu
+Skript se spouští z příkazové řádky a vyžaduje přesně 2 argumenty:
+
+Odkaz na územní celek (URL v uvozovkách z webu volby.cz).
+
+Název výstupního .csv souboru, do kterého se výsledky uloží.
+
+Formát spuštění:
+Bash
+python main.py "<URL_UZEMNIHO_CELKU>" "<NAZEV_VYSTUPNIHO_SOUBORU.csv>"
+Ukázka použití
+Příklad pro stahování výsledků pro územní celek Prostějov:
+
+Bash
+python main.py "[https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=12&xnumnuts=7103](https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=12&xnumnuts=7103)" "vysledky_prostejov.csv"
+Průběh a výstup:
+Skript ověří platnost zadaných argumentů.
+
+Stáhne data o jednotlivých obcích daného okresu (kód, název, voliči, obálky, platné hlasy a hlasy pro jednotlivé strany).
+
+Výsledek uloží do souboru vysledky_prostejov.csv.
