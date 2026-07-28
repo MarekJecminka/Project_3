@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup as bs
 def vysledky_hlasovani():
 
     def najdi_uzemni_celky(url: str) -> list:
-        "Funkce najde všechny možné územní celky - okresy."
+        """Funkce najde všechny možné územní celky - okresy."""
         
         rozdelene_html = bs(get("https://www.volby.cz/pls/ps2017nss/ps3?xjazyk=CZ").text, features="html.parser")
         vsechny_celky = rozdelene_html.find_all("a")
@@ -22,7 +22,7 @@ def vysledky_hlasovani():
         return [url + item for item in celky if "ps32" in item]
 
     def vytvor_jmena_csv(okresy_url: list) -> list:
-        "Funkce vytvoří všechny názvy csv souborů pro porovnání správnosti systémových argumentů."
+        """Funkce vytvoří všechny názvy csv souborů pro porovnání správnosti systémových argumentů."""
 
         vsechny_okresy = ["vysledky_praha.csv"]
         for item in okresy_url:
@@ -34,7 +34,7 @@ def vysledky_hlasovani():
         return vsechny_okresy    
 
     def odstran_diakritiku(jmena_okresu_csv: list) -> list:
-        "Funkce pro odstranění diakritiky."
+        """Funkce pro odstranění diakritiky."""
 
         bez_diakritiky = []
         odstranit_diakritiku = {"á":"a","č":"c","ď":"d","é":"e","ě":"e","í":"i","ň":"n","ó":"o",
@@ -45,7 +45,7 @@ def vysledky_hlasovani():
         return bez_diakritiky
 
     def over_prihlasovaci_udaje(udaje: dict) -> bool:
-        "Funkce porovnává zda se systémové argumenty shodují s předdefinovanými a vrací hodnoty True nebo False."
+        """Funkce porovnává zda se systémové argumenty shodují s předdefinovanými a vrací hodnoty True nebo False."""
 
         try:
             udaje[sys.argv[1]] == sys.argv[2]
@@ -60,7 +60,7 @@ def vysledky_hlasovani():
                 return False
     
     def najdi_linky_obci(base_url_obci: str) -> list:
-        "Funkce najde všehny linky obcí okresu, který si uživatel vybral pomocí systémového argumentu 1."
+        """Funkce najde všehny linky obcí okresu, který si uživatel vybral pomocí systémového argumentu 1."""
 
         url = sys.argv[1]
         rozdelene_html = bs(get(url).text, features="html.parser")
@@ -75,7 +75,7 @@ def vysledky_hlasovani():
         return linky
     
     def najdi_code_a_location() -> list:
-        "Funkce najde code a location pro všechny obce okresu a uloží je do listu."
+        """Funkce najde code a location pro všechny obce okresu a uloží je do listu."""
 
         url_okresu = sys.argv[1]
         rozdelene_html = bs(get(url_okresu).text, features="html.parser")
@@ -94,7 +94,7 @@ def vysledky_hlasovani():
         return code_a_location_tabulek
     
     def najdi_volebni_ucast(linky_obci: list) -> list:
-        "Funkce najde volební účast pro všechny obce okresu a uloží je do listu."
+        """Funkce najde volební účast pro všechny obce okresu a uloží je do listu."""
 
         volebni_ucast = []
         for link in linky_obci:
@@ -108,8 +108,8 @@ def vysledky_hlasovani():
         return volebni_ucast
     
     def najdi_hlasy_stran(linky_obci: list) -> list:
-        "Funkce najde hlasy pro všechny obce okresu a uloží je do listu."
-        "Také najde názvy všech kandidujících stran a uloží je do listu."
+        """Funkce najde hlasy pro všechny obce okresu a uloží je do listu.
+        Také najde názvy všech kandidujících stran a uloží je do listu."""
 
         hlasy_stran = []
         klice = []
@@ -133,7 +133,7 @@ def vysledky_hlasovani():
         return [hlasy_stran, klice[0]]
 
     def spoj_data_obci(code_a_location_obci: list, volebni_ucast_obci: list, hlasy_stran_obci: list) -> list:
-        "Funkce spojí code, location, volební účast a hlasy stran pro všechny obce okresu a uloží je do listu."
+        """Funkce spojí code, location, volební účast a hlasy stran pro všechny obce okresu a uloží je do listu."""
 
         data_obci = []
         for code, ucast, hlasy in zip(code_a_location_obci, volebni_ucast_obci, hlasy_stran_obci):
@@ -148,7 +148,7 @@ def vysledky_hlasovani():
         return data_obci
 
     def prirad_klice_k_datum(klice_dat: list, data: list) -> list[dict]:
-        "Funkce vytvoří z klíčů a dat pro jednotlivé obce okresu list dictu pro zápis do csv souboru."
+        """Funkce vytvoří z klíčů a dat pro jednotlivé obce okresu list dictu pro zápis do csv souboru."""
 
         data_obci = []
         for obec in data:
@@ -157,7 +157,7 @@ def vysledky_hlasovani():
         return data_obci
     
     def zapis_data_do_csv(data_csv: list[dict], klice_csv: list):
-        "Funkce vytvoří csv soubor, do kterého zapíše veškerá data obcí zvoleného okresu."
+        """Funkce vytvoří csv soubor, do kterého zapíše veškerá data obcí zvoleného okresu."""
 
         soubor_csv = open(f"{sys.argv[2]}", mode="w", newline="", encoding="utf-8-sig")
         zahlavi = klice_csv
@@ -167,7 +167,7 @@ def vysledky_hlasovani():
         soubor_csv.close()
 
     def uloz_volebni_data(base_url_dat: str):
-        "Funkce najde všechny linky obcí okresu a z nich uloží a zapíše všechny data do csv souboru."
+        """Funkce najde všechny linky obcí okresu a z nich uloží a zapíše všechny data do csv souboru."""
 
         linky = najdi_linky_obci(base_url_dat)
         code_a_location = najdi_code_a_location()
