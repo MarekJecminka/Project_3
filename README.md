@@ -33,7 +33,7 @@ python main.py "<URL_UZEMNIHO_CELKU>" "<NAZEV_VYSTUPNIHO_SOUBORU.csv>"
 Příklad pro stahování výsledků pro územní celek Prostějov:
 
 Bash
-python main.py "[https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=12&xnumnuts=7103](https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=12&xnumnuts=7103)" "vysledky_prostejov.csv"
+python main.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=12&xnumnuts=7103" "vysledky_prostejov.csv"
 
 Průběh a výstup:
   1) Skript ověří platnost zadaných argumentů,
