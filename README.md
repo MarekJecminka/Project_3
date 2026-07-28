@@ -26,12 +26,10 @@ Skript se spouští z příkazové řádky a vyžaduje přesně 2 argumenty:
   2) Název výstupního .csv souboru, do kterého se výsledky uloží.
 
 # Formát spuštění
-
 Bash
 python main.py "<URL_UZEMNIHO_CELKU>" "<NAZEV_VYSTUPNIHO_SOUBORU.csv>"
 
 # Ukázka použití
-
 Příklad pro stahování výsledků pro územní celek Prostějov:
 
 Bash
