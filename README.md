@@ -22,7 +22,7 @@ pip install -r requirements.txt
 # Spuštění projektu
 Skript se spouští z příkazové řádky a vyžaduje přesně 2 argumenty:
 
-  1) Odkaz na územní celek (URL v uvozovkách z webu volby.cz).
+  1) Odkaz na územní celek (URL v uvozovkách z webu volby.cz),
   2) Název výstupního .csv souboru, do kterého se výsledky uloží.
 
 # Formát spuštění
